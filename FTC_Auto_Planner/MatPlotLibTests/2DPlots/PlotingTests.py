@@ -1,26 +1,29 @@
 import matplotlib.pyplot as plt
 
-class LineDrawer:
-    def __init__(self):
-        self.fig, self.ax = plt.subplots()
-        self.ax.set_xlim(0, 10)
-        self.ax.set_ylim(0, 10)
-        self.xs = []
-        self.ys = []
-        self.line = None
-        self.cid = self.fig.canvas.mpl_connect('button_press_event', self)
+# initialize empty lists to store the x and y coordinates of the points
+x_vals = []
+y_vals = []
 
-    def __call__(self, event):
-        if event.inaxes != self.ax:
-            return
-        self.xs.append(event.xdata)
-        self.ys.append(event.ydata)
-        if len(self.xs) == 2:
-            self.ax.plot(self.xs, self.ys)
-            self.xs = []
-            self.ys = []
-            self.fig.canvas.draw()
+def onclick(event):
+    # add the clicked point to the lists
+    x_vals.append(event.xdata)
+    y_vals.append(event.ydata)
+    # clear the plot and redraw the points
+    plt.clf()
+    plt.scatter(x_vals, y_vals)
 
-if __name__ == '__main__':
-    ld = LineDrawer()
-    plt.show()
+    plt.xlim(0, 10)
+    plt.ylim(0, 10)
+    
+    plt.draw()
+
+# create the initial plot with no points
+fig, ax = plt.subplots()
+plt.xlim(0, 10)
+plt.ylim(0, 10)
+
+# register the onclick event handler
+cid = fig.canvas.mpl_connect('button_press_event', onclick)
+
+# show the plot
+plt.show()
