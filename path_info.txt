@@ -1,0 +1,4 @@
+drivetrain.DrivetrainAutoMove(50.49567094928021, 0.75, 91.47905249634731, telemetry);
+drivetrain.DrivetrainAutoMove(26.6657502513024, 0.75, 0.11154258364396662, telemetry);
+drivetrain.DrivetrainAutoMove(25.26406332986113, 0.75, 93.20202058332212, telemetry);
+drivetrain.DrivetrainAutoMove(24.783631070397345, 0.75, 87.83815162667864, telemetry);
