@@ -49,6 +49,11 @@ public class  FTC_14133_2022_Auto extends LinearOpMode{
         HardwareStart();
 
         //Test
+        drivetrain.DrivetrainAutoMove(99.0, 0.75, 180.0, telemetry);
+        drivetrain.DrivetrainAutoMove(136.4734406395618, 0.75, 313.51598532433786, telemetry);
+        drivetrain.DrivetrainAutoMove(97.0, 0.75, 91.82796824430501, telemetry);
+
+
 
 
 
