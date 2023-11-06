@@ -20,36 +20,7 @@ class Plotter:
         self.arm_count = 0
 
         # Load the background image
-        self.background_img = plt.imread(r'FTC_Auto_Planner\background.jpg')
-
-    def neg_clicked(self):
-        self.arm_count -= 1
-
-        self.pos['text'] = str(self.arm_count)
-
-    def pos_clicked(self):
-        self.arm_count += 1
-
-        self.pos['text'] = str(self.arm_count)
-
-    def arm_position_popup(self):
-        popup = tk.Tk()
-        popup.wm_title("Select Arm Position")
-
-        label = tk.Label(popup, text="Select Arm Position")
-        label.pack(side="top", fill="x", pady=10)
-
-        self.pos = tk.Label(popup, text="0")
-        self.pos.pack(side="top", fill="x", pady=10)
-
-        self.pos_button = tk.Button(popup, text="Increase", command=self.pos_clicked)
-        self.pos_button.pack(side="left", fill="x", pady=10)
-
-        self.neg_button = tk.Button(popup, text="Decrease", command=self.neg_clicked)
-        self.neg_button.pack(side="right", fill="x", pady=10)
-
-        popup.mainloop()
-
+        self.background_img = plt.imread(r'FTC_Auto_Planner\background.png')
 
     def plot_data(self, event):
         # Get the coordinates of the clicked point
@@ -112,7 +83,7 @@ class Plotter:
         for line in self.lines:
             line.remove()
 
-        self.ax.imshow(self.background_img, extent=[0, 144, 0, 144])
+        self.ax.imshow(self.background_img, extent=[-72, 72, -72, 72])
         self.point_listbox.delete(0, tk.END)
         
         self.lines.clear()
@@ -162,23 +133,14 @@ class Plotter:
         end_button = tk.Radiobutton(window, text="End Point", variable=self.marker_var, value='^')
         end_button.pack(side=tk.LEFT, padx=10)
 
-        intake_button = tk.Button(window, text="Intake Toggle", command=self.change_intake)
-        intake_button.pack(side=tk.LEFT, padx=10)
-
         intake_button = tk.Button(window, text="Clear", command=self.clear_plot)
         intake_button.pack(side=tk.LEFT, padx=10)
-
-        save_button = tk.Button(window, text="Save to File", command=self.save_to_file)
-        save_button.pack(side=tk.LEFT, padx=10)
-
-        arm_button = tk.Button(window, text="Arm", command=self.arm_position_popup)
-        arm_button.pack(side=tk.LEFT, padx=10)
 
         # Bind the plot_data function to mouse clicks on the canvas
         self.canvas.mpl_connect('button_press_event', self.plot_data)
 
         # Display the background image
-        self.ax.imshow(self.background_img, extent=[0, 144, 0, 144])
+        self.ax.imshow(self.background_img, extent=[-72, 72, -72, 72])
 
         # Update the point list initially
         self.update_point_list()
@@ -223,48 +185,11 @@ class Plotter:
             #if ((abs((waypoint[0][0]) - self.waypoints[i-1][0][0]) < 5)) and ((abs((waypoint[0][1]) - self.waypoints[i-1][0][1]) < 5)):
             #    continue
             self.point_listbox.insert(tk.END, f"Waypoint {i + 1}: {waypoint[0]}")
-            self.point_listbox.insert(tk.END, f"Intake Status: {waypoint[1]}")
-            self.point_listbox.insert(tk.END, f"Arm Status: {waypoint[2]}")
 
         # Add the end point to the listbox
         if self.end_point is not None:
             self.point_listbox.insert(tk.END, f"End Point: {self.end_point}")
 
-    def save_to_file(self):
-        # Calculate and store the distances and angles
-        self.distances.clear()
-        self.angles.clear()
-
-        self.full_points = self.waypoints
-        self.full_points.insert(0, (self.start_point, 1))
-        self.full_points.append((self.end_point, 1))
-
-        for point_index, point in enumerate(self.full_points):
-            if point == self.full_points[-1]:
-                continue
-
-            distance = self.calculate_distance(point[0], self.full_points[point_index+1][0])
-            angle = self.calculate_angle(point[0], self.full_points[point_index+1][0])
-
-            self.distances.append(distance)
-            self.angles.append(angle)
-
-
-        # Read the contents of the demofile.java file
-        with open(r'FTC_Auto_Planner\demofile.java', 'r') as file:
-            lines = file.readlines()
-
-        # Find the index of the line where you want to insert the information
-        insert_index = lines.index("        //Test\n") + 1
-
-        # Insert the line information at the specified index
-        lines.insert(insert_index, "\n")
-        for distance, angle in zip(self.distances, self.angles):
-            lines.insert(insert_index, f"        drivetrain.DrivetrainAutoMove({distance}, 0.75, {angle}, telemetry);\n")
-
-        # Write the modified lines back to the demofile.java file
-        with open(r'FTC_Auto_Planner\demofile.java', 'w') as file:
-            file.writelines(lines)
 # Create an instance of the Plotter class and run the GUI
 plotter = Plotter()
 plotter.create_gui()
